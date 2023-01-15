@@ -64,8 +64,34 @@ var encoderProfilesCmd = &cobra.Command{
 	},
 }
 
+var webEventProfilesCmd = &cobra.Command{
+	Use:   "webevent",
+	Short: "The 'webevent' command will show fetch webevent profiles.",
+	Long: `The 'webevent' command will show fetch webevent profiles.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		token, err := resi.Authenticate(viper.GetString("username"), viper.GetString("password"))
+		if err != nil {
+			helper.HandleError(err)
+		}
+
+		me, err := resi.Whoami(token)
+		if err != nil {
+			helper.HandleError(err)
+		}
+
+		webEventProfiles, err := resi.WebEventProfiles(token, me.CustomerId)
+		fmt.Println(" # UUID                                 Name")
+		fmt.Println("-- ------------------------------------ ----")
+		for i, v := range webEventProfiles {
+			fmt.Printf("%2d %36s %s\n", i, v.UUID, v.Name)
+		}
+
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(profilesCmd)
 	profilesCmd.AddCommand(eventProfilesCmd)
 	profilesCmd.AddCommand(encoderProfilesCmd)
+	profilesCmd.AddCommand(webEventProfilesCmd)
 }

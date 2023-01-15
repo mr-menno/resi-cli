@@ -5,15 +5,24 @@ import (
 	"errors"
 	"io"
 	"encoding/json"
+	"bytes"
+	"fmt"
 )
 
-type Encoder struct {
+type StreamProfile struct {
 	UUID string `json:"uuid"`
-	Name string `json:"name"`
-	CustomerId string `json:"customerId"`
-	SerialNumber string `json:"serialNumber"`
-	Status string `json:"status"`
-	OperationalState string `json:"operationalState"`
+}
+
+type Encoder struct {
+	UUID string `json:"uuid,omitempty"`
+	Name string `json:"name,omitempty"`
+	CustomerId string `json:"customerId,omitempty"`
+	SerialNumber string `json:"serialNumber,omitempty"`
+	Status string `json:"status,omitempty"`
+	OperationalState string `json:"operationalState,omitempty"`
+	StreamProfile StreamProfile `json:"streamProfile,omitempty"`
+	EncoderProfile EncoderProfile `json:"encoderProfile,omitempty"`
+	RequestedStatus string `json:"requestedStatus,omitempty"`
 }
 
 func Encoders(token string) ([]Encoder, error) {
@@ -46,5 +55,67 @@ func Encoders(token string) ([]Encoder, error) {
 	return encoders, nil
 }
 
-//https://central.resi.io/api_v2.svc/encoders?wide=true
-//Authorization: X-Bearer <token>
+func StopEncoder(token string, encoderUuid string) (bool, error) {
+	var oEncoder Encoder
+	oEncoder.RequestedStatus = "stop"
+
+	jsonPayload, _ := json.Marshal(oEncoder)
+	b := bytes.NewReader(jsonPayload)
+
+	req, err := http.NewRequest("PATCH", "https://central.resi.io/api_v2.svc/encoders/"+encoderUuid, b)
+	if err != nil {
+		return false, errors.New("ERROR: failed to setup new HTTP request")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization","X-Bearer "+token)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, errors.New("ERROR: failed to connect to central.resi.io to stop encoder")
+	}
+	if resp.Body != nil {
+		defer resp.Body.Close()
+	}
+
+	if resp.StatusCode != 200 {
+		fmt.Println(resp.Status)
+		return false, errors.New("ERROR: failed to stop encoder")
+	}
+
+	return true, nil
+}
+
+func StartEncoder(token string, encoderUuid string, eventProfileUuid string, presetUuid string) (bool, error) {
+	var oEncoder Encoder
+	oEncoder.StreamProfile.UUID = eventProfileUuid
+	oEncoder.EncoderProfile.UUID = presetUuid
+	oEncoder.RequestedStatus = "start"
+
+	jsonPayload, _ := json.Marshal(oEncoder)
+	b := bytes.NewReader(jsonPayload)
+
+	req, err := http.NewRequest("PATCH", "https://central.resi.io/api_v2.svc/encoders/"+encoderUuid, b)
+	if err != nil {
+		return false, errors.New("ERROR: failed to setup new HTTP request")
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Authorization","X-Bearer "+token)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, errors.New("ERROR: failed to connect to central.resi.io to start encoder")
+	}
+	if resp.Body != nil {
+		defer resp.Body.Close()
+	}
+
+	if resp.StatusCode != 200 {
+		return false, errors.New("ERROR: failed to start encoder")
+	}
+
+	return true, nil
+}

@@ -42,16 +42,3 @@ func EventProfiles(token string, customerId string) ([]EventProfile, error) {
 	}
 	return eventProfiles, nil
 }
-
-//https://central.resi.io/api/v3/customers/60e5326c-791f-47f8-aaef-00c26338c880/eventprofiles
-//Authorization: X-Bearer <token>
-/*
-[{
-	"uuid": "3c184517-0d81-4813-90fc-cc29964d9e17",
-	"name": "Default Encoder Event Profile",
-	"description": "Default Encoder Event Profile",
-	"deleteAfter": 10,
-	"lanOnly": false,
-	"bucket": "lao-default_encoder_event_profile_imf",
-	"regionId": "1290ae83-b319-4cf4-9069-41a7296c8c2c"
-}]*/

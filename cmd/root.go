@@ -28,11 +28,13 @@ func Execute() {
 
 var strUsername string
 var strPassword string
+var jsonOutput bool
 
 func init() {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVarP((&strUsername), "username", "u", "", "username required")
+	rootCmd.PersistentFlags().BoolVarP(&jsonOutput,"json","j",false,"JSON output")
 	viper.BindPFlag("username", rootCmd.PersistentFlags().Lookup("resi.username"))
 	rootCmd.PersistentFlags().StringVarP((&strPassword), "password", "p", "", "password required")
 }

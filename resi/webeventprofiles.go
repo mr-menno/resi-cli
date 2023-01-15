@@ -7,15 +7,14 @@ import (
 	"encoding/json"
 )
 
-type Me struct {
-	CustomerId string `json:"customerId"`
-	CustomerName string `json:"customerName"`
-	UserName string `json:"userName"`
-	UserId string `json:"userId"`
+type WebEventProfile struct {
+	UUID string `json:"uuid"`
+	Name string `json:"name"`
+	Description string `json:"description"`
 }
 
-func Whoami(token string) (*Me, error) {
-	httpRequest, httpRequestErr := http.NewRequest("GET", "https://central.resi.io/api_v2.svc/users/me", nil)
+func WebEventProfiles(token string, customerId string) ([]WebEventProfile, error) {
+	httpRequest, httpRequestErr := http.NewRequest("GET", "https://central.resi.io/api/v3/customers/"+customerId+"/webeventprofiles", nil)
 	if httpRequestErr != nil {
 		return nil, errors.New("ERROR: failed to setup new HTTP request")
 	}
@@ -36,10 +35,10 @@ func Whoami(token string) (*Me, error) {
 		return nil, errors.New("ERROR: failed to read response from resi.io for encoders")
 	}
 
-	var me Me
-	meErr := json.Unmarshal(respBody, &me)
-	if meErr != nil {
-		return nil, errors.New("ERROR: failed to read JSON response from resi.io for /api_v2.svc/users/me")
+	var WebEventProfiles []WebEventProfile
+	WebEventProfilesErr := json.Unmarshal(respBody, &WebEventProfiles)
+	if WebEventProfilesErr != nil {
+		return nil, errors.New("ERROR: failed to read JSON response from resi.io for encoders")
 	}
-	return &me, nil
+	return WebEventProfiles, nil
 }

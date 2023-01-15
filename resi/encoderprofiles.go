@@ -8,12 +8,12 @@ import (
 )
 
 type EncoderProfile struct {
-	UUID string `json:"uuid"`
-	Name string `json:"name"`
-	CustomerId string `json:"customerId"`
-	SerialNumber string `json:"serialNumber"`
-	Status string `json:"status"`
-	OperationalState string `json:"operationalState"`
+	UUID string `json:"uuid,omitempty"`
+	Name string `json:"name,omitempty"`
+	CustomerId string `json:"customerId,omitempty"`
+	SerialNumber string `json:"serialNumber,omitempty"`
+	Status string `json:"status,omitempty"`
+	OperationalState string `json:"operationalState,omitempty"`
 }
 
 func EncoderProfiles(token string, customerId string) ([]EncoderProfile, error) {
@@ -46,32 +46,3 @@ func EncoderProfiles(token string, customerId string) ([]EncoderProfile, error) 
 	return encoderProfiles, nil
 }
 
-//https://central.resi.io/api/v3/customers/60e5326c-791f-47f8-aaef-00c26338c880/encoderprofiles
-//Authorization: X-Bearer <token>
-/*
-[{
-	"uuid": "d50e1bad-0afb-43a6-a0ee-00ff75f40114",
-	"name": "1-1080p30 4Mb H264 2-Ch - Default",
-	"type": "DASH",
-	"inputOffset": null,
-	"audio": {
-		"channels": 2.0,
-		"bitratePerChan": 64
-	},
-	"video": [{
-		"input": [{
-			"format": "Hp30"
-		}],
-		"format": "Hp30",
-		"bitRate": 4.0,
-		"codec": "H264",
-		"bitDepth": 8,
-		"hardwareAcceleration": true
-	}],
-	"customName": "Default",
-	"interlaced": false,
-	"shortSegments": false,
-	"customProfile": false,
-	"lcevc": false,
-	"colorspace": null
-}]*/
