@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	// "path"
+	// "io/fs"
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
 	"github.com/mr-menno/resi-cli/helper"
+	// "path/filepath"
 )
 
 var configFile string
@@ -40,9 +43,15 @@ func init() {
 }
 
 func initConfig() {
-	configFile = ".resi-io.yml"
+	viper.SetConfigName(".resi-io")
 	viper.SetConfigType("yaml")
-	viper.SetConfigFile(configFile)
+	// viper.AddConfigPath("$HOME/.config/resi-cli")
+	viper.AddConfigPath("$HOME")
+
+	// fmt.Println(filepath.Join("$HOME/resi-cli",".resi-io.yaml"))
+	// configFile = "resi-io.yml"
+	// viper.SetConfigFile("$HOME/.resi-io.yml")
+	// viper.SetConfigFile("resi-io.yml")
 
 	
 	viper.AutomaticEnv()
@@ -60,6 +69,7 @@ func initConfig() {
 			helper.HandleError(err)
 		}
 		viper.Set("username",username)
+		viper.SafeWriteConfig()
 		viper.WriteConfig()
 	}
 	if viper.GetString("password") == "" {
@@ -69,6 +79,7 @@ func initConfig() {
 			helper.HandleError(err)
 		}
 		viper.Set("password",password)
+		viper.SafeWriteConfig()
 		viper.WriteConfig()
 	}
 
