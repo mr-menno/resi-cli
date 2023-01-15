@@ -13,7 +13,7 @@ import (
 var strEncoderUUID string
 var strEventUuid string
 var strPresetUuid string
-var bStateOnly
+var bStateOnly bool
 
 var encodersCmd = &cobra.Command{
 	Use:   "encoders",
@@ -26,17 +26,17 @@ var encodersCmd = &cobra.Command{
 		}
 		encoders, err := resi.Encoders(token)
 
-        if strEncoderUUID != "" and bStateOnly {
-            for _, v := range encoders {
-					if strEncoderUUID != "" {
-						if v.UUID == strEncoderUUID {
-							fmt.Println(v.Status)
-							break
-						}
+		if strEncoderUUID != "" && bStateOnly {
+			for _, v := range encoders {
+				if strEncoderUUID != "" {
+					if v.UUID == strEncoderUUID {
+						fmt.Println(v.Status)
+						break
 					}
 				}
-            return nil
-        }
+			}
+			return
+		}
 		if(jsonOutput) {
 			if strEncoderUUID != "" {
 				for _, v := range encoders {
@@ -52,7 +52,7 @@ var encodersCmd = &cobra.Command{
 				jsonOutput, _ := json.Marshal(encoders)
 				fmt.Println(string(jsonOutput))
 			}	
-			return nil
+			return
 		} else {
 			fmt.Println(" # Encoder Name                   UUID                                 Serial           Status   OperationalState")
 			fmt.Println("-- ------------------------------ ------------------------------------ ---------------- -------- ----------------")
@@ -64,7 +64,7 @@ var encodersCmd = &cobra.Command{
 				}
 				fmt.Printf("%2d %30s %36s %16s %8s %s\n", i, v.Name, v.UUID, v.SerialNumber, v.Status, v.OperationalState)
 			}
-			return nil
+			return
 		}
 	},
 }
