@@ -13,6 +13,7 @@ import (
 var strEncoderUUID string
 var strEventUuid string
 var strPresetUuid string
+var bStateOnly
 
 var encodersCmd = &cobra.Command{
 	Use:   "encoders",
@@ -25,6 +26,17 @@ var encodersCmd = &cobra.Command{
 		}
 		encoders, err := resi.Encoders(token)
 
+        if strEncoderUUID != "" and bStateOnly {
+            for _, v := range encoders {
+					if strEncoderUUID != "" {
+						if v.UUID == strEncoderUUID {
+							fmt.Println(v.Status)
+							break
+						}
+					}
+				}
+            return nil
+        }
 		if(jsonOutput) {
 			if strEncoderUUID != "" {
 				for _, v := range encoders {
@@ -40,6 +52,7 @@ var encodersCmd = &cobra.Command{
 				jsonOutput, _ := json.Marshal(encoders)
 				fmt.Println(string(jsonOutput))
 			}	
+			return nil
 		} else {
 			fmt.Println(" # Encoder Name                   UUID                                 Serial           Status   OperationalState")
 			fmt.Println("-- ------------------------------ ------------------------------------ ---------------- -------- ----------------")
@@ -51,6 +64,7 @@ var encodersCmd = &cobra.Command{
 				}
 				fmt.Printf("%2d %30s %36s %16s %8s %s\n", i, v.Name, v.UUID, v.SerialNumber, v.Status, v.OperationalState)
 			}
+			return nil
 		}
 	},
 }
@@ -113,6 +127,7 @@ func init() {
 	encodersCmd.PersistentFlags().StringVarP((&strEncoderUUID), "encoder-uuid", "", "", "encoder-uuid")
 	encodersCmd.PersistentFlags().StringVarP((&strEventUuid), "event-uuid", "", "", "event-uuid")
 	encodersCmd.PersistentFlags().StringVarP((&strPresetUuid), "preset-uuid", "", "", "preset-uuid")
+	encodersCmd.PersistentFlags().BoolVarP((&bStateOnly), "state-only","",false,"state-only")	
 	encodersCmd.AddCommand(encoderStopCmd)
 	encodersCmd.AddCommand(encoderStartCmd)
 	rootCmd.AddCommand(encodersCmd)
