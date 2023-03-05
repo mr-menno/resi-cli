@@ -80,10 +80,10 @@ var webEventProfilesCmd = &cobra.Command{
 		}
 
 		webEventProfiles, err := resi.WebEventProfiles(token, me.CustomerId)
-		fmt.Println(" # UUID                                 Name")
-		fmt.Println("-- ------------------------------------ ----")
+		fmt.Println(" # UUID                                 Active\tName")
+		fmt.Println("-- ------------------------------------ ------\t----")
 		for i, v := range webEventProfiles {
-			fmt.Printf("%2d %36s %s\n", i, v.UUID, v.Name)
+			fmt.Printf("%2d %36s %s\t%s\n", i, v.UUID, v.Active, v.Name)
 		}
 
 	},
